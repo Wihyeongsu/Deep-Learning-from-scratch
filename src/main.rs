@@ -1,12 +1,9 @@
+use ch03::{neuralnet_mnist, neuralnet_mnist_batch};
+
 mod ch02;
-use ndarray::{array};
-use ch02::{and_gate::*, nand_gate::*, xor_gate::*};
-
-
+mod ch03;
 
 fn main() {
-    println!("{}", Xor(0., 0.));
-    println!("{}", Xor(1., 0.));
-    println!("{}", Xor(0., 1.));
-    println!("{}", Xor(1., 1.));
+    // neuralnet_mnist_batch::run();
+    neuralnet_mnist::run();
 }
