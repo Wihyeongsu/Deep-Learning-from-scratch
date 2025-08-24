@@ -1,7 +1,8 @@
-use mnist::*;
 use ndarray::*;
 use ndarray_rand::{RandomExt, rand_distr::StandardNormal};
 use ndarray_stats::QuantileExt;
+
+use crate::ch03::mnist_dataset::{load_mnist, MnistDataset};
 
 use super::{sigmoid::sigmoid, softmax_function::softmax};
 
@@ -36,56 +37,18 @@ impl MnistNetworkBatch {
     }
 }
 
-pub fn get_data() -> (Array2<f64>, Array2<f64>) {
-    let Mnist {
-        trn_img,
-        trn_lbl,
-        tst_img,
-        tst_lbl,
-        ..
-    } = MnistBuilder::new()
-        .base_path("data/")
-        .label_format_digit()
-        .training_set_length(50_000)
-        .validation_set_length(10_000)
-        .test_set_length(10_000)
-        .finalize();
-
-    let image_num = 0;
-    // Can use an Array2 or Array3 here (Array3 for visualization)
-    let x_train = Array3::from_shape_vec((50_000, 28, 28), trn_img)
-        .expect("Error converting images to Array3 struct")
-        .map(|x| *x as f32 / 256.0);
-    println!("{:#.1?}\n", x_train.slice(s![image_num, .., ..]));
-
-    // Convert the returned Mnist struct to Array2 format
-    let t_train: Array2<f32> = Array2::from_shape_vec((50_000, 1), trn_lbl)
-        .expect("Error converting training labels to Array2 struct")
-        .map(|x| *x as f32);
-    println!(
-        "The first digit is a {:?}",
-        t_train.slice(s![image_num, ..])
-    );
-
-    let x_test = Array2::from_shape_vec((10_000, 784), tst_img)
-        .expect("Error converting images to Array3 struct")
-        .map(|x| *x as f64 / 256.);
-
-    let t_test: Array2<f64> = Array2::from_shape_vec((10_000, 1), tst_lbl)
-        .expect("Error converting testing labels to Array2 struct")
-        .map(|x| *x as f64);
-
-    (x_test, t_test)
-}
-
 pub fn run() {
-    let (x, t) = get_data();
+    let MnistDataset{
+        x_train_2d,
+        t_train,
+        ..
+    } = load_mnist((60_000, 0, 10_000), true, false);
     let network = MnistNetworkBatch::new();
     let batch_size = 100;
     let mut accuracy_cnt = 0_usize;
-    for i in 0..x.nrows() / batch_size {
+    for i in 0..x_train_2d.nrows() / batch_size {
         let i_batch = i * batch_size;
-        let x_batch = x.slice(s![i_batch..i_batch + batch_size, ..]).into_owned();
+        let x_batch = x_train_2d.slice(s![i_batch..i_batch + batch_size, ..]).into_owned();
         let y_batch = network.predict(&x_batch);
         let p = y_batch
             .rows()
@@ -93,7 +56,7 @@ pub fn run() {
             .map(|y| y.argmax().unwrap() as f64)
             .collect::<Array1<f64>>();
         accuracy_cnt += (&p
-            - &t.slice(s![i_batch..i_batch + batch_size, ..])
+            - &t_train.slice(s![i_batch..i_batch + batch_size, ..])
                 .into_owned()
                 .into_flat())
             .mapv(|t| if t == 0. { 1 } else { 0 })
@@ -101,12 +64,12 @@ pub fn run() {
         println!(
             "[{}/{}] Accuracy: {:.2}%",
             i + 1,
-            x.nrows() / batch_size,
+            x_train_2d.nrows() / batch_size,
             accuracy_cnt as f64 / (i_batch + batch_size) as f64 * 100.
         );
     }
     println!(
         "Accuracy: {:.2}%",
-        accuracy_cnt as f64 / x.nrows() as f64 * 100.
+        accuracy_cnt as f64 / x_train_2d.nrows() as f64 * 100.
     );
 }

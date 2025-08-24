@@ -1,4 +1,5 @@
 pub mod identity_function;
+pub mod mnist_dataset;
 pub mod neuralnet_mnist;
 pub mod neuralnet_mnist_batch;
 pub mod relu;
