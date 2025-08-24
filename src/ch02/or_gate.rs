@@ -1,15 +1,14 @@
 use ndarray::array;
 
-pub fn Or(x1:f64, x2:f64) -> f64 {
+pub fn Or(x1: f64, x2: f64) -> f64 {
     let x = array![x1, x2];
     // And에서 w,b만 다름
     let w = array![0.5, 0.5];
     let b = -0.2;
-    let y = (x*w).sum() + b;
+    let y = (x * w).sum() + b;
     if y <= 0. {
         return 0.;
-    }
-    else {
+    } else {
         return 1.;
     }
 }

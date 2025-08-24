@@ -5,7 +5,7 @@ pub struct MnistDataset {
     pub x_train_2d: Array2<f64>,
     pub x_train_3d: Array3<f64>,
     pub t_train: Array2<f64>,
-    
+
     pub x_val_2d: Array2<f64>,
     pub x_val_3d: Array3<f64>,
     pub t_val: Array2<f64>,
@@ -15,7 +15,11 @@ pub struct MnistDataset {
     pub t_test: Array2<f64>,
 }
 
-pub fn load_mnist((train_length, validation_length, test_length): (u32, u32, u32), normalize: bool, one_hot_encoding: bool) -> MnistDataset {
+pub fn load_mnist(
+    (train_length, validation_length, test_length): (u32, u32, u32),
+    normalize: bool,
+    one_hot_encoding: bool,
+) -> MnistDataset {
     let mut mnist_builder = MnistBuilder::new();
     mnist_builder
         .base_path("data/")
@@ -39,19 +43,31 @@ pub fn load_mnist((train_length, validation_length, test_length): (u32, u32, u32
 
     let x_train_2d = Array2::from_shape_vec((train_length as usize, 784), trn_img.clone())
         .expect("Error converting images to Array2 struct")
-        .map(|x| if normalize {*x as f64 / 256.0} else {*x as f64});
+        .map(|x| {
+            if normalize {
+                *x as f64 / 256.0
+            } else {
+                *x as f64
+            }
+        });
 
     let x_train_3d = Array3::from_shape_vec((train_length as usize, 28, 28), trn_img)
         .expect("Error converting images to Array3 struct")
-        .map(|x| if normalize {*x as f64 / 256.0} else {*x as f64});
+        .map(|x| {
+            if normalize {
+                *x as f64 / 256.0
+            } else {
+                *x as f64
+            }
+        });
 
     let t_train: Array2<f64> = if one_hot_encoding {
-            Array2::from_shape_vec((train_length as usize, 10), trn_lbl)
-        } else {
-            Array2::from_shape_vec((train_length as usize, 1), trn_lbl)
-        }
-        .expect("Error converting training labels to Array2 struct")
-        .map(|x| *x as f64);
+        Array2::from_shape_vec((train_length as usize, 10), trn_lbl)
+    } else {
+        Array2::from_shape_vec((train_length as usize, 1), trn_lbl)
+    }
+    .expect("Error converting training labels to Array2 struct")
+    .map(|x| *x as f64);
     // println!(
     //     "The first digit is a {:?}",
     //     t_train.slice(s![image_num, ..])
@@ -59,11 +75,23 @@ pub fn load_mnist((train_length, validation_length, test_length): (u32, u32, u32
 
     let x_val_2d = Array2::from_shape_vec((validation_length as usize, 784), val_img.clone())
         .expect("Error converting images to Array2 struct")
-        .map(|x| if normalize {*x as f64 / 256.0} else {*x as f64});
+        .map(|x| {
+            if normalize {
+                *x as f64 / 256.0
+            } else {
+                *x as f64
+            }
+        });
 
     let x_val_3d = Array3::from_shape_vec((validation_length as usize, 28, 28), val_img)
         .expect("Error converting images to Array3 struct")
-        .map(|x| if normalize {*x as f64 / 256.0} else {*x as f64});
+        .map(|x| {
+            if normalize {
+                *x as f64 / 256.0
+            } else {
+                *x as f64
+            }
+        });
 
     let t_val: Array2<f64> = if one_hot_encoding {
         Array2::from_shape_vec((validation_length as usize, 10), val_lbl)
@@ -75,21 +103,33 @@ pub fn load_mnist((train_length, validation_length, test_length): (u32, u32, u32
 
     let x_test_2d = Array2::from_shape_vec((test_length as usize, 784), tst_img.clone())
         .expect("Error converting images to Array2 struct")
-        .map(|x| if normalize {*x as f64 / 256.0} else {*x as f64});
+        .map(|x| {
+            if normalize {
+                *x as f64 / 256.0
+            } else {
+                *x as f64
+            }
+        });
 
     let x_test_3d = Array3::from_shape_vec((test_length as usize, 28, 28), tst_img)
         .expect("Error converting images to Array3 struct")
-        .map(|x| if normalize {*x as f64 / 256.0} else {*x as f64});
+        .map(|x| {
+            if normalize {
+                *x as f64 / 256.0
+            } else {
+                *x as f64
+            }
+        });
 
     let t_test: Array2<f64> = if one_hot_encoding {
-        Array2::from_shape_vec((test_length as usize, 10), tst_lbl)  
+        Array2::from_shape_vec((test_length as usize, 10), tst_lbl)
     } else {
-        Array2::from_shape_vec((test_length as usize, 1), tst_lbl)  
+        Array2::from_shape_vec((test_length as usize, 1), tst_lbl)
     }
     .expect("Error converting testing labels to Array2 struct")
     .map(|x| *x as f64);
 
-    MnistDataset { 
+    MnistDataset {
         x_train_2d,
         x_train_3d,
         t_train,
@@ -98,6 +138,6 @@ pub fn load_mnist((train_length, validation_length, test_length): (u32, u32, u32
         t_val,
         x_test_2d,
         x_test_3d,
-        t_test
+        t_test,
     }
 }

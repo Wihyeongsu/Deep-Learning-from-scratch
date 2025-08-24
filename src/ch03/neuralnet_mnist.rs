@@ -2,7 +2,7 @@ use ndarray::*;
 use ndarray_rand::{RandomExt, rand_distr::StandardNormal};
 use ndarray_stats::QuantileExt;
 
-use crate::ch03::mnist_dataset::{load_mnist, MnistDataset};
+use crate::ch03::mnist_dataset::{MnistDataset, load_mnist};
 
 use super::{sigmoid::sigmoid, softmax_function::*};
 
@@ -38,7 +38,7 @@ impl MnistNetwork {
 }
 
 pub fn run() {
-    let MnistDataset{
+    let MnistDataset {
         x_train_2d,
         t_train,
         ..

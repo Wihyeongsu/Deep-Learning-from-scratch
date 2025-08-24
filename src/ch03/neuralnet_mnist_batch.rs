@@ -2,7 +2,7 @@ use ndarray::*;
 use ndarray_rand::{RandomExt, rand_distr::StandardNormal};
 use ndarray_stats::QuantileExt;
 
-use crate::ch03::mnist_dataset::{load_mnist, MnistDataset};
+use crate::ch03::mnist_dataset::{MnistDataset, load_mnist};
 
 use super::{sigmoid::sigmoid, softmax_function::softmax};
 
@@ -38,7 +38,7 @@ impl MnistNetworkBatch {
 }
 
 pub fn run() {
-    let MnistDataset{
+    let MnistDataset {
         x_train_2d,
         t_train,
         ..
@@ -48,7 +48,9 @@ pub fn run() {
     let mut accuracy_cnt = 0_usize;
     for i in 0..x_train_2d.nrows() / batch_size {
         let i_batch = i * batch_size;
-        let x_batch = x_train_2d.slice(s![i_batch..i_batch + batch_size, ..]).into_owned();
+        let x_batch = x_train_2d
+            .slice(s![i_batch..i_batch + batch_size, ..])
+            .into_owned();
         let y_batch = network.predict(&x_batch);
         let p = y_batch
             .rows()
@@ -56,7 +58,8 @@ pub fn run() {
             .map(|y| y.argmax().unwrap() as f64)
             .collect::<Array1<f64>>();
         accuracy_cnt += (&p
-            - &t_train.slice(s![i_batch..i_batch + batch_size, ..])
+            - &t_train
+                .slice(s![i_batch..i_batch + batch_size, ..])
                 .into_owned()
                 .into_flat())
             .mapv(|t| if t == 0. { 1 } else { 0 })
