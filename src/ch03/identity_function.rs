@@ -1,8 +1,7 @@
 use ndarray::{Array, Dimension};
 
-pub fn identity_function<D>(x: &Array<f64, D>) -> Array<f64, D>
-where
-    D: Dimension,
-{
+use crate::common::bigfloat_array::BigFloatArray;
+
+pub fn identity_function<D: Dimension>(x: &BigFloatArray<D>) -> BigFloatArray<D> {
     x.clone()
 }

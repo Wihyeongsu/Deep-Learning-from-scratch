@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use ch03::{neuralnet_mnist, neuralnet_mnist_batch};
 use ndarray::{Array, Array2, Axis, Dimension, array};
-use ndarray_rand::{RandomExt, SamplingStrategy};
+use ndarray_rand::{RandomExt, SamplingStrategy, rand_distr::StandardNormal};
 
 use crate::{
     ch03::mnist_dataset::{MnistDataset, load_mnist},
@@ -12,12 +12,15 @@ use crate::{
         gradient::{function_1, function_2, gradient_descent, numerical_diff, numerical_gradient},
         gradient_simplenet::SimpleNet,
         sum_squares_error::sum_squares_error,
+        two_layer::{TwoLayerNet, mini_batch},
     },
+    common::Element,
 };
 
 mod ch02;
 mod ch03;
 mod ch04;
+mod common;
 
 fn main() {
     // neuralnet_mnist_batch::run();
@@ -26,13 +29,13 @@ fn main() {
     // let t = array![0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
     // let cee = cross_entropy_error(&y, &t);
     // println!("{cee}");
-    let MnistDataset {
-        x_train_2d,
-        t_train,
-        x_test_2d,
-        t_test,
-        ..
-    } = load_mnist((60_000, 0, 10_000), true, true);
+    // let MnistDataset {
+    //     x_train_2d,
+    //     t_train,
+    //     x_test_2d,
+    //     t_test,
+    //     ..
+    // } = load_mnist((60_000, 0, 10_000), true, true);
 
     // let train_size = x_train_2d.shape()[0];
     // let batch_size = 10;
@@ -46,15 +49,17 @@ fn main() {
     // };
     // draw_graph(draw_content);
 
-    let net = SimpleNet::new();
-    println!("{:?}", net.w);
-    let x = array![0.6, 0.9];
-    let p = net.predict(&x);
-    println!("{:?}", p);
-    let t = array![0., 0., 1.];
-    let loss = net.loss(&x, &t);
-    println!("{:?}", loss);
-    let f = |w: &Array2<f64>| net.clone().loss_with_weights(w, &x, &t);
-    let dw = numerical_gradient(f, &net.w);
-    println!("{:?}", dw);
+    // let net = SimpleNet::new();
+    // println!("{:?}", net.w);
+    // let x = array![0.6, 0.9];
+    // let p = net.predict(&x);
+    // println!("{:?}", p);
+    // let t = array![0., 0., 1.];
+    // let loss = net.loss(&x, &t);
+    // println!("{:?}", loss);
+    // let f = |w: &Array2<f64>| net.clone().loss_with_weights(w, &x, &t);
+    // let dw = numerical_gradient(f, &net.w);
+    // println!("{:?}", dw);
+
+    mini_batch();
 }

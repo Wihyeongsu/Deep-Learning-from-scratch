@@ -1,8 +1,11 @@
 use ndarray::{Array, ArrayBase, Data, Dimension};
+use num_bigfloat::BigFloat;
 
-pub fn sigmoid<D>(x: &Array<f64, D>) -> Array<f64, D>
+use crate::common::bigfloat_array::BigFloatArray;
+
+pub fn sigmoid<D>(x: &BigFloatArray<D>) -> BigFloatArray<D>
 where
     D: Dimension,
 {
-    1. / (1. + (-x).exp())
+    1. / ((-x).exp() + 1.)
 }

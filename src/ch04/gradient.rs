@@ -38,6 +38,7 @@ where
         let fxh2 = f(&x_cloned);
 
         grad[multi_idx.clone()] = (fxh1 - fxh2) / (2. * h);
+        // println!("{:?}, {:?}", multi_idx.clone(), grad[multi_idx.clone()])
     }
 
     grad

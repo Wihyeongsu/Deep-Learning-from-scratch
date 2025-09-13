@@ -1,31 +1,36 @@
+use std::hash::BuildHasherDefault;
+
 use ndarray::*;
 use ndarray_rand::{RandomExt, rand_distr::StandardNormal};
 use ndarray_stats::QuantileExt;
 
-use crate::ch03::mnist_dataset::{MnistDataset, load_mnist};
+use crate::{
+    ch03::mnist_dataset::{MnistDataset, load_mnist},
+    common::bigfloat_array::BigFloatArray,
+};
 
 use super::{sigmoid::sigmoid, softmax_function::*};
 
 pub struct MnistNetwork {
-    w: Vec<Array2<f64>>,
-    b: Vec<Array1<f64>>,
+    w: Vec<BigFloatArray<Ix2>>,
+    b: Vec<BigFloatArray<Ix1>>,
 }
 
 impl MnistNetwork {
     pub fn new() -> Self {
         let w = vec![
-            Array::random((784, 50), StandardNormal),
-            Array::random((50, 100), StandardNormal),
-            Array::random((100, 10), StandardNormal),
+            BigFloatArray::from(Array::random((784, 50), StandardNormal).mapv(|x: f64| x)),
+            BigFloatArray::from(Array::random((50, 100), StandardNormal).mapv(|x: f64| x)),
+            BigFloatArray::from(Array::random((100, 10), StandardNormal).mapv(|x: f64| x)),
         ];
         let b = vec![
-            Array::random(50, StandardNormal),
-            Array::random(100, StandardNormal),
-            Array::random(10, StandardNormal),
+            BigFloatArray::from(Array::random(50, StandardNormal).mapv(|x: f64| x)),
+            BigFloatArray::from(Array::random(100, StandardNormal).mapv(|x: f64| x)),
+            BigFloatArray::from(Array::random(10, StandardNormal).mapv(|x: f64| x)),
         ];
         MnistNetwork { w, b }
     }
-    fn predict(&self, x: &Array1<f64>) -> Array1<f64> {
+    fn predict(&self, x: &Array1<Element>) -> Array1<Element> {
         let a1 = x.dot(&self.w[0]) + &self.b[0];
         let z1 = sigmoid(&a1);
         let a2 = z1.dot(&self.w[1]) + &self.b[1];
@@ -47,7 +52,7 @@ pub fn run() {
     let mut accuracy_cnt = 0;
     for i in 0..x_train_2d.nrows() {
         let y = network.predict(&x_train_2d.row(i).into_owned());
-        let p = y.argmax().unwrap() as f64;
+        let p = y.argmax().unwrap();
         if p == t_train[[i, 0]] {
             accuracy_cnt += 1;
         }
@@ -57,11 +62,11 @@ pub fn run() {
             x_train_2d.nrows(),
             p,
             t_train[[i, 0]],
-            accuracy_cnt as f64 / (i + 1) as f64 * 100.
+            accuracy_cnt as Element / (i + 1) as Element * 100.
         );
     }
     println!(
         "Accuracy: {:.2}%",
-        accuracy_cnt as f64 / x_train_2d.nrows() as f64 * 100.
+        accuracy_cnt as Element / x_train_2d.nrows() as Element * 100.
     );
 }

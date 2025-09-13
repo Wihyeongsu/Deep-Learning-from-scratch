@@ -1,18 +1,20 @@
 use mnist::{Mnist, MnistBuilder};
-use ndarray::{Array2, Array3};
+use ndarray::{Array2, Array3, Ix2, Ix3};
+
+use crate::common::bigfloat_array::BigFloatArray;
 
 pub struct MnistDataset {
-    pub x_train_2d: Array2<f64>,
-    pub x_train_3d: Array3<f64>,
-    pub t_train: Array2<f64>,
+    pub x_train_2d: BigFloatArray<Ix2>,
+    pub x_train_3d: BigFloatArray<Ix3>,
+    pub t_train: BigFloatArray<Ix2>,
 
-    pub x_val_2d: Array2<f64>,
-    pub x_val_3d: Array3<f64>,
-    pub t_val: Array2<f64>,
+    pub x_val_2d: BigFloatArray<Ix2>,
+    pub x_val_3d: BigFloatArray<Ix3>,
+    pub t_val: BigFloatArray<Ix2>,
 
-    pub x_test_2d: Array2<f64>,
-    pub x_test_3d: Array3<f64>,
-    pub t_test: Array2<f64>,
+    pub x_test_2d: BigFloatArray<Ix2>,
+    pub x_test_3d: BigFloatArray<Ix3>,
+    pub t_test: BigFloatArray<Ix2>,
 }
 
 pub fn load_mnist(
@@ -130,14 +132,14 @@ pub fn load_mnist(
     .map(|x| *x as f64);
 
     MnistDataset {
-        x_train_2d,
-        x_train_3d,
-        t_train,
-        x_val_2d,
-        x_val_3d,
-        t_val,
-        x_test_2d,
-        x_test_3d,
-        t_test,
+        x_train_2d: BigFloatArray::from(x_train_2d),
+        x_train_3d: BigFloatArray::from(x_train_3d),
+        t_train: BigFloatArray::from(t_train),
+        x_val_2d: BigFloatArray::from(x_val_2d),
+        x_val_3d: BigFloatArray::from(x_val_3d),
+        t_val: BigFloatArray::from(t_val),
+        x_test_2d: BigFloatArray::from(x_test_2d),
+        x_test_3d: BigFloatArray::from(x_test_3d),
+        t_test: BigFloatArray::from(t_test),
     }
 }

@@ -7,7 +7,7 @@ use crate::{ch03::softmax_function::softmax, ch04::cross_entropy_error::cross_en
 
 #[derive(Clone)]
 pub struct SimpleNet {
-    pub w: Array2<f64>, // RefCell
+    pub w: Array2<f64>,
 }
 
 impl SimpleNet {
