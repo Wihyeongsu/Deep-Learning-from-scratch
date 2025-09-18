@@ -1,4 +1,4 @@
-use ndarray::{Array, Dimension};
+use ndarray::Dimension;
 
 use crate::common::bigfloat_array::BigFloatArray;
 

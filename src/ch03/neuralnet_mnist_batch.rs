@@ -2,30 +2,34 @@ use ndarray::*;
 use ndarray_rand::{RandomExt, rand_distr::StandardNormal};
 use ndarray_stats::QuantileExt;
 
-use crate::ch03::mnist_dataset::{MnistDataset, load_mnist};
+use crate::{ch03::mnist_dataset::{load_mnist, MnistDataset}, common::bigfloat_array::{self, BigFloatArray}};
 
 use super::{sigmoid::sigmoid, softmax_function::softmax};
 
 pub struct MnistNetworkBatch {
-    w: Vec<Array2<f64>>,
-    b: Vec<Array1<f64>>,
+    w: Vec<BigFloatArray<Ix2>>,
+    b: Vec<BigFloatArray<Ix1>>,
 }
 
 impl MnistNetworkBatch {
     pub fn new() -> Self {
         let w = vec![
-            Array::random((784, 50), StandardNormal),
-            Array::random((50, 100), StandardNormal),
-            Array::random((100, 10), StandardNormal),
-        ];
+            Array::<f64, _>::random((784, 50), StandardNormal),
+            Array::<f64, _>::random((50, 100), StandardNormal),
+            Array::<f64, _>::random((100, 10), StandardNormal),
+        ]
+        .into_iter().map(|arr| BigFloatArray::from(arr))
+        .collect();
         let b = vec![
-            Array::random(50, StandardNormal),
-            Array::random(100, StandardNormal),
-            Array::random(10, StandardNormal),
-        ];
+            Array::<f64, _>::random(50, StandardNormal),
+            Array::<f64, _>::random(100, StandardNormal),
+            Array::<f64, _>::random(10, StandardNormal),
+        ]
+        .into_iter().map(|arr| BigFloatArray::from(arr))
+        .collect();
         MnistNetworkBatch { w, b }
     }
-    fn predict(&self, x: &Array2<f64>) -> Array2<f64> {
+    fn predict(&self, x: &BigFloatArray<Ix2>) -> BigFloatArray<Ix2> {
         let a1 = x.dot(&self.w[0]) + &self.b[0];
         let z1 = sigmoid(&a1);
         let a2 = z1.dot(&self.w[1]) + &self.b[1];
