@@ -12,6 +12,7 @@ use crate::{
         gradient::{function_1, function_2, gradient_descent, numerical_diff, numerical_gradient},
         gradient_simplenet::SimpleNet,
         sum_squares_error::sum_squares_error,
+        two_layer::mini_batch,
     },
 };
 
@@ -46,15 +47,17 @@ fn main() {
     // };
     // draw_graph(draw_content);
 
-    let net = SimpleNet::new();
-    println!("{:?}", net.w);
-    let x = array![0.6, 0.9];
-    let p = net.predict(&x);
-    println!("{:?}", p);
-    let t = array![0., 0., 1.];
-    let loss = net.loss(&x, &t);
-    println!("{:?}", loss);
-    let f = |w: &Array2<f64>| net.clone().loss_with_weights(w, &x, &t);
-    let dw = numerical_gradient(f, &net.w);
-    println!("{:?}", dw);
+    // let net = SimpleNet::new();
+    // println!("{:?}", net.w);
+    // let x = array![0.6, 0.9];
+    // let p = net.predict(&x);
+    // println!("{:?}", p);
+    // let t = array![0., 0., 1.];
+    // let loss = net.loss(&x, &t);
+    // println!("{:?}", loss);
+    // let f = |w: &Array2<f64>| net.clone().loss_with_weights(w, &x, &t);
+    // let dw = numerical_gradient(f, &net.w);
+    // println!("{:?}", dw);
+
+    mini_batch();
 }

@@ -1,6 +1,5 @@
-use std::{
-    cell::RefCell, collections::HashMap, rc::Rc,
-};
+use core::f64;
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 use ndarray::{Array, Array1, Array2, Axis, Ix1, Ix2};
 use ndarray_rand::{
@@ -157,14 +156,19 @@ pub fn mini_batch() {
         ..
     } = load_mnist((60_000, 0, 10_000), true, true);
 
-    let mut train_loss_list = Vec::new();
+    let mut network = TwoLayerNet::new(784, 50, 10, 0.01);
 
+    // Hyperparameter
     let iters_num = 10000;
     let train_size = x_train_2d.shape()[0];
     let batch_size = 100;
     let learning_rate = 0.1;
 
-    let mut network = TwoLayerNet::new(784, 50, 10, 0.01);
+    let mut train_loss_list = Vec::new();
+    let mut train_acc_list = Vec::new();
+    let mut test_acc_list = Vec::new();
+
+    let mut iter_per_epoch = 1.max(train_size / batch_size);
 
     for i in 1..=iters_num {
         // mini batch
@@ -197,10 +201,15 @@ pub fn mini_batch() {
         let loss = network.loss(&x_batch, &t_batch);
         train_loss_list.push(loss);
 
-        println!(
-            "Batch ({i}/{iters_num}): Loss = {loss} Accuracy = {accuracy}",
-            accuracy = network.accuracy(&x_batch, &t_batch)
-        );
+        // accuracy per epoch
+        if i % iter_per_epoch == 0 {
+            let train_acc = network.accuracy(&x_train_2d, &t_train);
+            let test_acc = network.accuracy(&x_test_2d, &t_test);
+            train_acc_list.push(train_acc);
+            test_acc_list.push(test_acc);
+
+            println!("train acc: {:?} | test acc {:?}", train_acc, test_acc);
+        }
     }
 
     // print loss
